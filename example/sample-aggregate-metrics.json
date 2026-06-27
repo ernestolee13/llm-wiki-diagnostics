@@ -1,0 +1,304 @@
+{
+  "schema_version": "llm-wiki-aggregate-metrics-v0",
+  "artifact_purpose": "Stage 2 output: aggregate measured, inferred, and unavailable evidence into report-ready metrics. This file is illustrative only.",
+  "generated_at": "2026-06-24T00:00:00+09:00",
+  "scope": {
+    "wiki_type": "markdown",
+    "connection_model": "wikilink_plus_folder_indexes",
+    "time_window": "sample only"
+  },
+  "data_coverage": {
+    "structure": "measured",
+    "logs": "measured",
+    "session_trace": "inferred",
+    "query_telemetry": "unavailable",
+    "token_telemetry": "inferred",
+    "elapsed_time_telemetry": "inferred"
+  },
+  "diagnostic_question_groups": [
+    {
+      "question_ko": "위키가 잘 구축되어 있는가?",
+      "subquestions": [
+        {
+          "question_ko": "운영 구성요소가 갖춰져 있는가?",
+          "answer_ko": "가이드, 진입점, 로그가 확인되며 기본 운영 골격은 있다.",
+          "source": "static wiki",
+          "confidence": "measured_or_inferred",
+          "metric_ids": [
+            "entrypoint.count",
+            "activity.log_entry_count"
+          ]
+        },
+        {
+          "question_ko": "인덱스와 시작 지점이 탐색을 돕는가?",
+          "answer_ko": "진입점은 있으나 가장 큰 인덱스가 반복적으로 읽히는지 함께 봐야 한다.",
+          "source": "static wiki plus session hints",
+          "confidence": "inferred",
+          "metric_ids": [
+            "entrypoint.count",
+            "entrypoint.largest_index_token_estimate"
+          ]
+        },
+        {
+          "question_ko": "운영 기록과 신뢰 단서가 남는가?",
+          "answer_ko": "운영 기록이 주간 단위로 남아 있어 추가/수정/정리 흐름을 일부 볼 수 있다.",
+          "source": "logs/activity",
+          "confidence": "measured_partial",
+          "metric_ids": [
+            "activity.log_entry_count",
+            "activity.weekly_log_entries"
+          ]
+        },
+        {
+          "question_ko": "문서 단위와 연결은 문제가 없는가?",
+          "answer_ko": "문서 길이와 연결 보강 후보를 함께 보면 우선 점검 대상을 잡을 수 있다.",
+          "source": "static connection model",
+          "confidence": "inferred_review_candidates",
+          "metric_ids": [
+            "structure.median_document_words",
+            "structure.p90_document_words",
+            "connection.low_inbound_candidate_ratio"
+          ]
+        }
+      ]
+    },
+    {
+      "question_ko": "내가 효율적으로 사용하고 있는가?",
+      "subquestions": [
+        {
+          "question_ko": "요청당 비용은 어떤가?",
+          "answer_ko": "target 관련 검색성 요청의 검색/조회 단계, 문서 수, 시간, 토큰 신호를 우선 본다.",
+          "source": "session inference or request telemetry",
+          "confidence": "inferred_until_query_log_exists",
+          "metric_ids": [
+            "usage.retrieval_steps_per_lookup_avg",
+            "usage.objects_read_per_lookup_avg",
+            "usage.elapsed_seconds_p50",
+            "usage.tokens_per_lookup_p50",
+            "usage.target_related_request_count"
+          ]
+        },
+        {
+          "question_ko": "시간이 지나며 무거워지는가?",
+          "answer_ko": "요청량만이 아니라 요청당 도구 호출, 읽은 객체, 시간, 토큰 신호가 함께 늘어나는지 본다.",
+          "source": "session/request windows",
+          "confidence": "partial_trend",
+          "metric_ids": [
+            "usage.weekly_cost_trend"
+          ]
+        },
+        {
+          "question_ko": "무엇을 자주 쓰는가?",
+          "answer_ko": "자주 등장하는 객체가 실제 내용인지, 가이드/인덱스/로그/생성물인지 분리한다.",
+          "source": "session path/object references",
+          "confidence": "partial_parser_path_refs",
+          "metric_ids": [
+            "usage.lookup_request_count"
+          ]
+        },
+        {
+          "question_ko": "어디서 비용이나 실패가 생기는가?",
+          "answer_ko": "요청 유형별 비용과 rank/depth/hit/fallback 공백을 함께 본다.",
+          "source": "session inference plus telemetry gaps",
+          "confidence": "inferred_and_unavailable",
+          "metric_ids": [
+            "precision.query_log_present"
+          ]
+        }
+      ]
+    }
+  ],
+  "grouping_examples": [
+    "by request window",
+    "by week or month",
+    "by object role such as guide, entrypoint, content, log, generated report",
+    "by request type such as lookup, write, maintenance, mixed, chat",
+    "by target-related versus all parsed requests",
+    "by confidence level such as measured, inferred, unavailable"
+  ],
+  "visualization_hints": [
+    "Use compact top cards for interpreted signals.",
+    "Use mini trends for time-window changes when enough timestamps exist.",
+    "Use bars or stacked bars for role composition, connection-health candidates, and data coverage.",
+    "Use tables only for audit detail, raw lists, and exact candidate examples."
+  ],
+  "metrics": [
+    {
+      "id": "structure.document_count",
+      "label_ko": "문서 수",
+      "value": 420,
+      "unit": "documents",
+      "confidence": "measured",
+      "question": "위키가 너무 커져서 탐색 부담이 생기고 있는가?"
+    },
+    {
+      "id": "structure.median_document_words",
+      "label_ko": "보통 문서 길이",
+      "value": 360,
+      "unit": "words",
+      "confidence": "measured",
+      "question": "문서가 검색하고 읽기 좋은 단위인가?"
+    },
+    {
+      "id": "structure.p90_document_words",
+      "label_ko": "긴 문서 기준선",
+      "value": 1850,
+      "unit": "words",
+      "confidence": "measured",
+      "question": "너무 긴 문서가 검색 후 읽기 비용을 키우고 있는가?"
+    },
+    {
+      "id": "entrypoint.count",
+      "label_ko": "진입점 수",
+      "value": 9,
+      "unit": "files",
+      "confidence": "measured",
+      "question": "필요한 지식으로 들어가는 입구가 충분한가?"
+    },
+    {
+      "id": "entrypoint.largest_index_token_estimate",
+      "label_ko": "가장 큰 인덱스 추정 토큰",
+      "value": 1400,
+      "unit": "tokens",
+      "confidence": "inferred",
+      "question": "인덱스 자체가 너무 커져서 매번 읽기 부담이 되는가?"
+    },
+    {
+      "id": "connection.low_inbound_candidate_ratio",
+      "label_ko": "연결 보강 후보 비율",
+      "value": 0.22,
+      "unit": "ratio",
+      "confidence": "inferred",
+      "question": "현재 연결 모델에서 찾기 어려운 문서가 많은가?",
+      "caveat": "wikilink 기준 예시이며 tag/graph/vector 관계가 있으면 재해석해야 한다. archive, generated output, template/example은 live content와 우선순위를 분리한다."
+    },
+    {
+      "id": "activity.log_entry_count",
+      "label_ko": "운영 기록 수",
+      "value": 76,
+      "unit": "entries",
+      "confidence": "measured",
+      "question": "문서 추가/수정/정리 기록이 남고 있는가?"
+    },
+    {
+      "id": "activity.weekly_log_entries",
+      "label_ko": "주간 운영 기록",
+      "series": [
+        { "week": "2026-W21", "value": 8 },
+        { "week": "2026-W22", "value": 12 },
+        { "week": "2026-W23", "value": 10 },
+        { "week": "2026-W24", "value": 15 }
+      ],
+      "unit": "entries",
+      "confidence": "measured",
+      "question": "운영 활동이 꾸준히 기록되는가?"
+    },
+    {
+      "id": "usage.lookup_request_count",
+      "label_ko": "검색성 요청 수",
+      "value": 38,
+      "unit": "requests",
+      "confidence": "inferred",
+      "question": "실제 사용 흐름에서 정보 조회 요청이 얼마나 있었는가?"
+    },
+    {
+      "id": "usage.target_related_request_count",
+      "label_ko": "target 관련 요청 수",
+      "value": 24,
+      "unit": "requests",
+      "confidence": "inferred",
+      "question": "전체 세션 중 실제 위키 진단 대상과 관련된 요청은 얼마나 되는가?",
+      "caveat": "session parser scope and target-matching rules should be shown near the chart."
+    },
+    {
+      "id": "usage.request_type_cost",
+      "label_ko": "요청 유형별 비용",
+      "series": [
+        { "type": "lookup_or_research", "requests": 12, "tools_per_request": 3.2, "elapsed_seconds_p50": 62, "token_signal_p50": 5200 },
+        { "type": "mixed_lookup_write", "requests": 18, "tools_per_request": 8.4, "elapsed_seconds_p50": 118, "token_signal_p50": 11200 },
+        { "type": "write_or_maintenance", "requests": 8, "tools_per_request": 6.1, "elapsed_seconds_p50": 94, "token_signal_p50": 8800 }
+      ],
+      "confidence": "inferred",
+      "question": "어떤 요청 유형이 위키 사용 비용을 키우는가?"
+    },
+    {
+      "id": "usage.retrieval_steps_per_lookup_avg",
+      "label_ko": "요청당 검색/조회 단계",
+      "value": 3.1,
+      "unit": "steps/request",
+      "confidence": "inferred",
+      "question": "정보 하나를 찾는 데 몇 번의 탐색이 필요한가?"
+    },
+    {
+      "id": "usage.objects_read_per_lookup_avg",
+      "label_ko": "요청당 열어본 문서",
+      "value": 4.4,
+      "unit": "objects/request",
+      "confidence": "inferred",
+      "question": "한 요청에서 너무 많은 문서를 확인하고 있는가?"
+    },
+    {
+      "id": "usage.elapsed_seconds_p50",
+      "label_ko": "검색성 요청 중간 시간",
+      "value": 74,
+      "unit": "seconds",
+      "confidence": "inferred",
+      "question": "정보를 찾는 데 체감 시간이 긴가?",
+      "caveat": "transcript timestamp based; may include idle gaps or session resumes. Hook/request telemetry would be measured."
+    },
+    {
+      "id": "usage.elapsed_seconds_p90",
+      "label_ko": "느린 검색성 요청 시간",
+      "value": 210,
+      "unit": "seconds",
+      "confidence": "inferred",
+      "question": "어려운 요청에서 시간이 급격히 늘어나는가?"
+    },
+    {
+      "id": "usage.tokens_per_lookup_p50",
+      "label_ko": "검색성 요청 중간 토큰",
+      "value": 6800,
+      "unit": "tokens",
+      "confidence": "inferred",
+      "question": "정보 조회에 드는 컨텍스트 비용이 적절한가?",
+      "caveat": "provider usage fields, request-log deltas, cache-inclusive values, and rough text-size estimates should be labeled separately."
+    },
+    {
+      "id": "usage.weekly_cost_trend",
+      "label_ko": "주간 검색 비용 추세",
+      "series": [
+        { "week": "2026-W21", "steps_per_request": 2.2, "objects_per_request": 3.1, "elapsed_seconds_p50": 58 },
+        { "week": "2026-W22", "steps_per_request": 2.7, "objects_per_request": 3.8, "elapsed_seconds_p50": 66 },
+        { "week": "2026-W23", "steps_per_request": 3.4, "objects_per_request": 4.7, "elapsed_seconds_p50": 83 },
+        { "week": "2026-W24", "steps_per_request": 3.2, "objects_per_request": 4.5, "elapsed_seconds_p50": 76 }
+      ],
+      "confidence": "inferred",
+      "question": "위키 사용 비용이 시간이 지나며 무거워지고 있는가?"
+    },
+    {
+      "id": "precision.query_log_present",
+      "label_ko": "쿼리 로그 존재",
+      "value": false,
+      "unit": null,
+      "confidence": "measured",
+      "question": "사용 비용을 엄밀하게 측정할 수 있는가?"
+    }
+  ],
+  "recommendation_candidates": [
+    {
+      "title_ko": "큰 인덱스는 하위 인덱스로 나누고, 실제 조회 빈도에 맞춰 진입점을 정리한다.",
+      "evidence_metric_ids": [
+        "entrypoint.largest_index_token_estimate",
+        "usage.objects_read_per_lookup_avg"
+      ]
+    },
+    {
+      "title_ko": "검색성 요청에는 요청 ID, elapsed time, selected objects, token fields만 남기는 경량 로그를 붙인다.",
+      "evidence_metric_ids": [
+        "precision.query_log_present",
+        "usage.elapsed_seconds_p50",
+        "usage.tokens_per_lookup_p50"
+      ]
+    }
+  ]
+}

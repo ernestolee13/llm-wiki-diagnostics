@@ -1,0 +1,126 @@
+{
+  "schema_version": "llm-wiki-intake-profile-v0",
+  "artifact_purpose": "Stage 1 output: describe the local wiki shape and evidence sources before collecting metrics. This file is illustrative only.",
+  "generated_at": "2026-06-24T00:00:00+09:00",
+  "privacy_mode": "paths_and_aggregate_only",
+  "detected_surfaces": {
+    "guides": [
+      {
+        "path": "0. Guide/LLM-WIKI-GUIDE.md",
+        "role": "agent operating guide",
+        "confidence": "measured"
+      }
+    ],
+    "entrypoints": [
+      {
+        "path": "0. Index/index.md",
+        "role": "global index",
+        "confidence": "measured"
+      },
+      {
+        "path": "1. Projects/demo-project/_index.md",
+        "role": "project subindex",
+        "confidence": "inferred"
+      }
+    ],
+    "logs": [
+      {
+        "path": "0. Logs/wiki-log.md",
+        "role": "global activity log",
+        "confidence": "measured"
+      }
+    ],
+    "retrieval_surfaces": [
+      {
+        "kind": "markdown_search",
+        "description": "text search over markdown notes"
+      },
+      {
+        "kind": "wikilink_graph",
+        "description": "Obsidian-style wikilinks used as one connection model"
+      }
+    ],
+    "quality_surfaces": [
+      {
+        "kind": "frontmatter_updated",
+        "description": "optional updated date in properties"
+      },
+      {
+        "kind": "source_links",
+        "description": "optional source/provenance links"
+      }
+    ],
+    "session_sources": [
+      {
+        "kind": "agent_transcript",
+        "description": "retrospective session trace, provider-specific parser needed",
+        "confidence": "inferred"
+      }
+    ],
+    "telemetry_sources": [],
+    "generated_or_excluded": [
+      "reports/",
+      ".obsidian/plugins/",
+      "templates/",
+      "archive/"
+    ]
+  },
+  "inferred_model": {
+    "wiki_substrate": "markdown",
+    "index_strategy": "global_plus_project_hubs",
+    "log_strategy": "single_global",
+    "connection_model": "wikilink_plus_folder_indexes",
+    "quality_model": "freshness_plus_optional_sources",
+    "main_agent_candidates": [
+      "generic coding agent"
+    ],
+    "confidence": "inferred",
+    "evidence": [
+      "guide file detected",
+      "global index and project subindex detected",
+      "global log detected"
+    ]
+  },
+  "collector_hints": [
+    "Count documents and typical sizes excluding generated folders.",
+    "Treat wikilinks as one connection model, not the only possible one.",
+    "Parse logs as activity proxy, not complete edit history.",
+    "Use session traces only for aggregate request-level estimates.",
+    "If query telemetry is missing, look for user-provided session context and decide whether a temporary parser can infer request windows."
+  ],
+  "report_hints": [
+    "Default report language should be Korean.",
+    "Lead with the two questions: wiki build quality and usage efficiency.",
+    "Show measured, inferred, and unavailable signals separately."
+  ],
+  "diagnostic_question_groups": [
+    {
+      "question_ko": "위키가 잘 구축되어 있는가?",
+      "subquestions_ko": [
+        "운영 구성요소가 갖춰져 있는가?",
+        "인덱스와 시작 지점이 탐색을 돕는가?",
+        "운영 기록과 신뢰 단서가 남는가?",
+        "문서 단위와 연결은 문제가 없는가?"
+      ]
+    },
+    {
+      "question_ko": "내가 효율적으로 사용하고 있는가?",
+      "subquestions_ko": [
+        "요청당 비용은 어떤가?",
+        "시간이 지나며 무거워지는가?",
+        "무엇을 자주 쓰는가?",
+        "어디서 비용이나 실패가 생기는가?"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "question": "Project-local _index.md files appear to be subindexes. Should they be treated as routing entrypoints rather than ordinary content?",
+      "why_it_matters": "This changes index burden, entrypoint coverage, and orphan/dead-end interpretation."
+    }
+  ],
+  "assumptions_if_unanswered": [
+    "Treat _index.md files as routing entrypoints.",
+    "Treat logs as incomplete activity records, not full edit telemetry."
+  ]
+}
