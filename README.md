@@ -44,7 +44,7 @@ Obsidian 볼트 안에서 바로 실행한다면:
 요청별 query log가 없다면, 위키를 주로 사용한 에이전트나 세션 힌트를 같이 주세요.
 
 ```text
-요청별 로그는 따로 없지만, 이 위키는 주로 Claude Code의 my-wiki-session 프로젝트/세션에서 조회하고 수정했어. 가능하면 해당 세션 기록을 간접 분석해서 요청당 시간, 도구 호출, 문서 조회, 토큰 추정치를 함께 리포트해줘.
+요청별 로그는 따로 없지만, 이 위키는 주로 <agent/runtime>의 <project-or-session>에서 조회하고 수정했어. 가능하면 해당 세션 기록을 간접 분석해서 요청당 시간, 도구 호출, 문서 조회, 토큰 추정치를 함께 리포트해줘.
 ```
 
 더 좋은 입력:
@@ -66,6 +66,21 @@ Obsidian 볼트 안에서 바로 실행한다면:
 - query log가 없지만 세션 transcript나 runtime trace를 간접 분석할 수 있는 구조
 
 다만 모든 위키에 자동으로 정확히 맞는 제품은 아닙니다. 이 패키지는 고정 parser가 아니라 `어떤 질문을 해야 하고, 어떤 증거를 찾아야 하며, 어떤 리포트를 만들어야 하는지`를 알려주는 가이드입니다. 실제 계산식, 파서, source family, 연결 모델은 사용자의 에이전트가 환경에 맞게 조정해야 합니다.
+
+## 관련 프로젝트와 태그
+
+- [para-knowledge-base](https://github.com/ernestolee13/para-knowledge-base) — PARA형 Obsidian 볼트에 LLM wiki 구조, 인덱스, 로그, ingest/query/lint/index 운영 흐름을 추가하는 Claude Code 플러그인.
+- `llm-wiki-diagnostics`는 그 위키가 잘 구축되어 있고 효율적으로 사용되는지 진단하는 별도 가이드 패키지입니다.
+
+함께 관리하기 좋은 GitHub topics:
+
+- `llm-wiki`
+- `obsidian`
+- `knowledge-base`
+- `pkm`
+- `wiki-diagnostics`
+- `query-telemetry`
+- `agent-observability`
 
 ## 주의사항
 
